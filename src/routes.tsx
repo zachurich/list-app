@@ -11,4 +11,8 @@ export const routes: RouteObject[] = [
     path: "/:spaceId/",
     element: <Space />,
   },
+  {
+    path: "/:spaceId/list/:listId",
+    element: <Space />,
+  },
 ];
