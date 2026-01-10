@@ -1,6 +1,7 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import supabase from "./db";
 import { v4 as uuidv4 } from "uuid";
+import { clearSpaceToken, createSpaceToken, getSpaceToken } from "./token";
 
 type Space = {
   created_at: string;
@@ -14,7 +15,7 @@ type Space = {
 type InsertSpace = Pick<Space, "author">;
 
 export const useSpaceQuery = () => {
-  const spaceToken = localStorage.getItem("space_token"); // Replace with actual token logic if needed
+  const spaceToken = getSpaceToken();
   return useQuery<Space>({
     queryKey: ["space"],
     queryFn: async () => {
@@ -41,19 +42,26 @@ export const useSpaceQuery = () => {
 };
 
 export const useSpaceMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (newSpace: InsertSpace) => {
-      const spaceToken = uuidv4();
-      localStorage.setItem("space_token", spaceToken);
+      const spaceToken = createSpaceToken();
       const { data, error } = await supabase
         .from("space")
         .insert([{ ...newSpace, space_token: spaceToken }])
         .select()
         .single();
       if (error || !data) {
+        clearSpaceToken();
         throw new Error(error ? error.message : "Insertion failed");
       }
       return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["space"] });
+    },
+    onError: () => {
+      clearSpaceToken();
     },
   });
 };

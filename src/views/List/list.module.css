@@ -1,0 +1,97 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.listTitle {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.listTitle h2 {
+  margin: 0;
+}
+
+.listItems {
+  margin-top: 1rem;
+  width: 100%;
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.listItem {
+  --checkbox-size: 1.25rem;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.listItem label {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+  padding: 0.25rem 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.listItem .labelText {
+}
+
+.listItem .checkboxContainer {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.listItem input {
+  cursor: pointer;
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: var(--border-md);
+
+  border-radius: var(--corners, 2rem);
+}
+
+.listItem input + .checkmark {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  display: block;
+  width: calc(var(--checkbox-size) - 10px);
+  height: calc(var(--checkbox-size) - 10px);
+  background-color: palevioletred;
+  border-radius: var(--corners, 2rem);
+  transition: opacity 150ms;
+}
+
+.listItem input:checked + .checkmark {
+  opacity: 1;
+}
+
+.listItem input:not(:checked) + .checkmark {
+  opacity: 0;
+}
+
+.addItem {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.addItemInput[type="text"] {
+  font-size: 1rem;
+}

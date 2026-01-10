@@ -10,8 +10,8 @@
   margin-top: 0rem;
   /* padding: 1rem 0; */
   max-width: 20rem;
-  border-right: 2px solid rgba(255, 255, 255, 0.1);
-  min-height: calc(100dvh - 4.75rem);
+  border-right: var(--border-sm);
+  min-height: calc(100dvh - 3rem);
 
   --corners: 2rem;
 }
@@ -22,7 +22,7 @@
   justify-content: center;
   align-items: flex-start;
   box-sizing: border-box;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: var(--border-sm);
 }
 
 .list a {
@@ -46,7 +46,7 @@
 
 .main {
   flex: 1;
-  padding: 1rem;
+  padding: 1.75rem;
 }
 
 .addList {
