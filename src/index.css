@@ -5,21 +5,54 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --border-color: rgba(255, 255, 255, 0.1);
+
+  --border-sm: 1px solid var(--border-color);
+  --border-md: 2px solid var(--border-color);
+
+  --action-color: #646cff;
+  --action-color-hover: #2b31a0;
+
+  --button-color: var(--action-color);
+  --button-color-hover: var(--action-color-hover);
+  --button-border-color-hover: var(--action-color);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    background-color: #f9f9f9;
+    color: rgba(32, 32, 32, 0.87);
+
+    --border-color: rgba(81, 81, 81, 0.13);
+    --action-color: #646cff;
+    --action-color-hover: #535bf2;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    background-color: #121212;
+    color: rgba(255, 255, 255, 0.87);
+
+    --border-color: rgba(255, 255, 255, 0.1);
+    --action-color: #7178ff;
+    --action-color-hover: #535bf2;
+  }
 }
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--action-color);
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--action-color-hover);
 }
 
 body {
@@ -34,8 +67,10 @@ h1 {
   line-height: 1.1;
 }
 
+.h2,
 h2 {
-  font-size: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
   line-height: 1.2;
 }
 
@@ -47,27 +82,38 @@ button {
   font-size: 1rem;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--button-color);
+  color: #fff;
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
-  border-color: #646cff;
+
+button.secondary {
+  background-color: transparent;
+  border: 1px solid var(--button-color);
+  color: var(--button-color);
 }
+
+button.secondary:hover {
+  background-color: var(--button-color-hover);
+  color: #fff;
+  border-color: var(--button-border-color-hover);
+}
+
+button:hover {
+  background-color: var(--button-color-hover);
+  border-color: var(--button-border-color-hover);
+}
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+input[type="text"] {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
 }
