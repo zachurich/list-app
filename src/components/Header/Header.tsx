@@ -1,34 +1,32 @@
-import { Link, useMatch } from "react-router";
-import { useSpaceQuery } from "../../services/spaces";
 import styles from "./header.module.css";
-import { useListQuery } from "../../services/lists";
+import { useTheme } from "../../theme";
+import { Moon, Sun } from "lucide-react";
+import { Button } from "../Button/Button";
+import { useSpace } from "../../views/Space/hooks";
 
 export const Header = () => {
-  const { data, isLoading: isSpaceLoading } = useSpaceQuery();
-  const { params = {} }: { params?: { spaceId?: string; listId?: string } } =
-    useMatch("/:spaceId/list/:listId") ?? {};
-  const listId = params?.listId;
-  const { data: listData, isLoading: isListLoading } = useListQuery(
-    listId,
-    data?.id
-  );
-  const isLoading = isSpaceLoading || isListLoading;
+  const { theme, toggleTheme } = useTheme();
 
-  if (isLoading || !data) {
-    return null;
-  }
+  const { space, isLoading, listId } = useSpace();
 
   const isBackLink = Boolean(listId);
 
   return (
     <header className={styles.header}>
       <h1>
-        {data
+        {space
           ? `${
-              data.author.charAt(0).toUpperCase() + data.author.slice(1)
+              space.author.charAt(0).toUpperCase() + space.author.slice(1)
             }'s Lists`
-          : "No Author Found"}{" "}
+          : null}
       </h1>
+      <Button
+        // className={styles.themeToggle}
+        variant="icon"
+        onClick={toggleTheme}
+      >
+        {theme === "dark" ? <Sun size={24} /> : <Moon size={24} />}
+      </Button>
     </header>
   );
 };

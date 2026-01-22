@@ -8,6 +8,7 @@ import { Header } from "./components/Header/Header";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { useEffect } from "react";
 import { getSpaceToken } from "./services/token";
+import { ThemeProvider } from "./theme";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,20 +47,22 @@ function Redirect() {
 
 function App() {
   return (
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{ persister }}
-    >
-      <BrowserRouter>
-        <Header />
-        <Redirect />
-        <Routes>
-          {routes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.element} />
-          ))}
-        </Routes>
-      </BrowserRouter>
-    </PersistQueryClientProvider>
+    <ThemeProvider>
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister }}
+      >
+        <BrowserRouter>
+          <Header />
+          <Redirect />
+          <Routes>
+            {routes.map((route, index) => (
+              <Route key={index} path={route.path} element={route.element} />
+            ))}
+          </Routes>
+        </BrowserRouter>
+      </PersistQueryClientProvider>
+    </ThemeProvider>
   );
 }
 

@@ -8,7 +8,7 @@ type ListItem = {
   completed: boolean;
 };
 
-type List = {
+export type List = {
   id: string;
   title: string;
   slug: string;
@@ -32,21 +32,19 @@ export const useListQuery = (
   listId: string | undefined,
   spaceId: string | undefined
 ) => {
-  const { data: allLists, isLoading, error } = useAllListsQuery(spaceId); // Preload all lists for caching
+  const { data: allLists, ...rest } = useAllListsQuery(spaceId); // Preload all lists for caching
   const singleList = allLists?.find((list) => list.id === listId);
 
   if (!singleList) {
     return {
       data: null,
-      isLoading,
-      error,
+      ...rest,
     };
   }
 
   return {
     data: singleList,
-    isLoading,
-    error,
+    ...rest,
   };
 };
 
@@ -55,10 +53,13 @@ export const useAllListsQuery = (spaceId: string | undefined) => {
     queryKey: ["lists"],
     enabled: Boolean(spaceId),
     select: (data: ListDb[]) =>
-      data.map((list) => ({
-        ...list,
-        data: typeof list.data === "string" ? JSON.parse(list.data) : list.data,
-      })),
+      sortLists(
+        data.map((list) => ({
+          ...list,
+          data:
+            typeof list.data === "string" ? JSON.parse(list.data) : list.data,
+        }))
+      ),
     queryFn: async () => {
       try {
         const { data, error } = await supabase
@@ -84,7 +85,7 @@ export const useListMutation = (
 ) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (newList: Omit<List, "id" | "created_at" | "slug">) => {
+    mutationFn: async (newList: Partial<List>) => {
       if (!spaceId) {
         throw new Error("Space ID is required to create a list");
       }
@@ -105,9 +106,10 @@ export const useListMutation = (
 
       const list = {
         ...newList,
-        slug: newList.title.toLowerCase().replace(/\s+/g, "-"),
+        slug: newList?.title?.toLowerCase().replace(/\s+/g, "-"),
         space_id: spaceId,
       };
+
       const { data, error } = await supabase
         .from("list")
         .insert([list])
@@ -119,9 +121,71 @@ export const useListMutation = (
 
       return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["lists"] });
+    onMutate: async (variables, context) => {
+      await context.client.cancelQueries({ queryKey: ["lists"] });
+      // Snapshot the previous value
+      const previous: List[] | undefined = context.client.getQueryData([
+        "lists",
+      ]);
+      // Optimistically update to the new value
+      await context.client.setQueryData(
+        ["lists"],
+        (old: List[] | undefined) => {
+          const listBeingUpdated = old?.find((list) => list.id === listId);
+          const existing = (old || []).filter(
+            (list) => list.id !== listBeingUpdated?.id
+          );
+          return sortLists([
+            ...existing,
+            {
+              id: listId || "",
+              title: listBeingUpdated?.title || "",
+              data: listBeingUpdated?.data || [],
+              slug: listBeingUpdated?.slug || "",
+              created_at: listBeingUpdated?.created_at ?? "",
+              space_id: listBeingUpdated?.space_id || "",
+              ...variables,
+            },
+          ]);
+        }
+      );
+
+      return { previous };
     },
+    onError: (err, newTodo, onMutateResult, context) => {
+      context.client.setQueryData(["lists"], onMutateResult?.previous);
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["lists"] }),
+  });
+};
+
+export const useListDelete = (spaceId: string | undefined) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (listId: string) => {
+      if (!spaceId) {
+        throw new Error("Space ID is required to delete a list");
+      }
+
+      const { error } = await supabase
+        .from("list")
+        .delete()
+        .eq("id", listId)
+        .eq("space_id", spaceId);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["lists"] }),
+  });
+};
+
+export const sortLists = (lists: List[]) => {
+  return lists.slice().sort((a, b) => {
+    const indexA = new Date(a.created_at).getTime();
+    const indexB = new Date(b.created_at).getTime();
+    return indexA - indexB;
   });
 };
 
