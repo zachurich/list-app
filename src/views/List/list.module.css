@@ -13,6 +13,22 @@
 
 .listTitle h2 {
   margin: 0;
+  cursor: pointer;
+}
+
+.editIcon {
+  margin-left: 0.25rem;
+  color: var(--action-color);
+}
+
+.listTitle h2:hover,
+.listTitle h2:focus {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.listTitle input[type="text"] {
+  font-size: 1.25rem;
 }
 
 .listItems {
@@ -25,7 +41,7 @@
 }
 
 .listItem {
-  --checkbox-size: 1.25rem;
+  --checkbox-size: 1.5rem;
 
   display: flex;
   justify-content: flex-end;
@@ -62,8 +78,7 @@
   appearance: none;
   margin: 0;
   padding: 0;
-  border: var(--border-md);
-
+  border: 2px solid var(--checkbox-border-color);
   border-radius: var(--corners, 2rem);
 }
 
@@ -72,9 +87,9 @@
   inset: 0;
   margin: auto;
   display: block;
-  width: calc(var(--checkbox-size) - 10px);
-  height: calc(var(--checkbox-size) - 10px);
-  background-color: palevioletred;
+  width: calc(var(--checkbox-size) - 12px);
+  height: calc(var(--checkbox-size) - 12px);
+  background-color: var(--checkbox-color);
   border-radius: var(--corners, 2rem);
   transition: opacity 150ms;
 }

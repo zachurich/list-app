@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./menu.module.css";
 import { Ellipsis } from "lucide-react";
+import { Button } from "../Button/Button";
 
 type MenuItem = {
   label: string;
@@ -32,12 +33,13 @@ export const Menu = ({ items }: { items: MenuItem[] }) => {
 
   return (
     <div className={styles.root}>
-      <button
+      <Button
         className={styles.menuButton}
         onClick={() => setVisible(!visible)}
+        variant="icon"
       >
         <Ellipsis size={18} />
-      </button>
+      </Button>
       {visible && (
         <div className={styles.menu} ref={menuRef}>
           {items.map((item) => (

@@ -5,14 +5,13 @@ import {
   markItemIncomplete,
   useListMutation,
   useListQuery,
-  type List as ListType,
 } from "../../services/lists";
 import { useSpaceQuery } from "../../services/spaces";
 import { useForm } from "@tanstack/react-form";
 
 import styles from "./list.module.css";
 import { Button } from "../../components/Button/Button";
-import { Plus } from "lucide-react";
+import { PencilIcon, Plus } from "lucide-react";
 
 type Props = {
   listId: string;
@@ -23,7 +22,7 @@ export const List = ({ listId }: Props) => {
   const { data: listData, isLoading } = useListQuery(listId, spaceData?.id);
   const { mutateAsync: updateList, isPending } = useListMutation(
     spaceData?.id,
-    listId
+    listId,
   );
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -152,7 +151,12 @@ export const List = ({ listId }: Props) => {
             />
           ) : (
             <h2 ref={focusRef} onClick={handleTitleEdit}>
-              {listData?.title}
+              {listData?.title}{" "}
+              <PencilIcon
+                className={styles.editIcon}
+                strokeWidth={2}
+                size={18}
+              />
             </h2>
           )}
         </div>

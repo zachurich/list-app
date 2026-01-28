@@ -10,6 +10,8 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  --base-font-size: 16px;
+
   --white: #f0f0f0;
 
   --primary-text-color: var(--white);
@@ -23,12 +25,17 @@
   --border-sm-faint: 1px solid var(--border-color-faint);
   --border-md-faint: 2px solid var(--border-color-faint);
 
-  --action-color: #646cff;
+  --action-color: #fa4f4f;
   --action-color-hover: #2b31a0;
+  --action-border-color-hover: #2e34ad82;
+  --action-color-secondary: #646cff;
+
+  --checkbox-border-color: rgba(255, 255, 255, 0.6);
+  --checkbox-color: var(--action-color-secondary);
 
   --button-color: var(--action-color);
   --button-color-hover: var(--action-color-hover);
-  --button-border-color-hover: var(--action-color);
+  --button-border-color-hover: var(--action-border-color-hover);
   --button-text-hover-color: var(--primary-text-color);
 
   --active-indicator: rgba(100, 108, 255, 0.1);
@@ -38,20 +45,26 @@
 
   --box-shadow: 0 13px 8px -8px rgba(0, 0, 0, 0.05);
 
+  --header-height: 3.25rem;
+
+  --transition: 0.5s cubic-bezier(0, 0.02, 0.23, 0.99);
+
   color: var(--primary-text-color);
 }
 
 :root[data-theme="light"] {
   --border-color: rgba(0, 0, 0, 0.1);
-  --action-color: #646cff;
+  --action-color: #fa4f4f;
   --action-color-hover: #535bf2;
   --active-indicator: rgba(100, 113, 255, 0.249);
+  --action-color-secondary: #646cff;
   --background-color: #f0eee6;
   --background-color-secondary: #ffffff;
   --box-shadow: 0 13px 8px -8px rgba(0, 0, 0, 0.05);
   --border-color-faint: rgba(0, 0, 0, 0.062);
   --primary-text-color: #1c1c1c;
   --button-text-hover-color: var(--white);
+  --checkbox-border-color: rgba(0, 0, 0, 0.6);
 
   color: var(--primary-text-color);
 }
@@ -66,6 +79,7 @@ body {
   background-color: var(--background-color);
   margin: 0;
   display: flex;
+  font-size: var(--base-font-size);
   min-width: 320px;
   min-height: 100vh;
 }
@@ -83,10 +97,30 @@ h2 {
   color: var(--primary-text-color);
 }
 
+input[type="checkbox"] {
+  font-size: var(--base-font-size);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--background-color-secondary);
+  color: var(--primary-text-color);
+}
+
 input[type="text"] {
-  background: transparent;
-  padding: 0;
-  margin: 0;
-  border: none;
-  outline: none;
+  font-size: var(--base-font-size);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--background-color-secondary);
+  color: var(--primary-text-color);
+}
+
+a:focus-within,
+button:focus-within,
+input[type="text"]:focus-within,
+input[type="checkbox"]:focus-within {
+  outline: 2px solid var(--action-color-secondary);
+  outline-offset: 0.25rem;
 }

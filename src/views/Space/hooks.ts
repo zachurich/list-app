@@ -18,7 +18,10 @@ export const useSpace = () => {
   const _urlPathParams: { params?: { spaceId?: string; listId?: string } } =
     useMatch("/:spaceId/list/:listId") ?? {};
 
-  const spaceId = _routerPathParams?.spaceId ?? _urlPathParams.params?.spaceId;
+  const spaceId =
+    _routerPathParams?.spaceId ??
+    _urlPathParams.params?.spaceId ??
+    spaceData?.id;
   const listId = _routerPathParams?.listId ?? _urlPathParams.params?.listId;
 
   const {

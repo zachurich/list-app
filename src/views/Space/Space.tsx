@@ -1,13 +1,7 @@
-import { Link, useNavigate, useParams } from "react-router";
-import { useSpaceQuery } from "../../services/spaces";
+import { Link } from "react-router";
 
 import styles from "./space.module.css";
-import {
-  useAllListsQuery,
-  useListDelete,
-  useListMutation,
-  type List as ListType,
-} from "../../services/lists";
+import { type List as ListType } from "../../services/lists";
 import { List } from "../List/List";
 import { Menu } from "../../components/Menu/Menu";
 
@@ -15,6 +9,7 @@ import classNames from "classnames";
 import { Plus } from "lucide-react";
 import { Button } from "../../components/Button/Button";
 import { useSpace } from "./hooks";
+import { useIsMobile, useSidebarVisibility } from "../../ui";
 
 export const Space = () => {
   const {
@@ -29,6 +24,9 @@ export const Space = () => {
     createList,
   } = useSpace();
 
+  const isMobile = useIsMobile();
+  const isSidebarVisible = useSidebarVisibility();
+
   const handleAddList = async () => {
     const newList = {
       title: "Untitled List",
@@ -39,7 +37,9 @@ export const Space = () => {
     try {
       console.log("Creating list:", newList);
       const res = await createList(newList);
-      navigate(`/${spaceId}/list/${res.id}`);
+      if (!isMobile) {
+        navigate(`/${spaceId}/list/${res.id}`);
+      }
     } catch (error) {
       console.error("Error creating list:", error);
     }
@@ -83,7 +83,12 @@ export const Space = () => {
         [styles.loaded]: !isLoading,
       })}
     >
-      <aside className={styles.lists}>
+      <aside
+        className={styles.lists}
+        style={{
+          display: isSidebarVisible ? undefined : "none",
+        }}
+      >
         {listsData?.map((list) => (
           <section
             key={list.id}

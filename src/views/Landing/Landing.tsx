@@ -3,6 +3,9 @@ import { useForm } from "@tanstack/react-form";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 
+import styles from "./landing.module.css";
+import { Button } from "../../components/Button/Button";
+
 export const Landing = () => {
   const { data: existingSpace, error, isLoading } = useSpaceQuery();
   const { mutateAsync } = useSpaceMutation();
@@ -44,9 +47,13 @@ export const Landing = () => {
   }
 
   return (
-    <div>
-      <h1>Landing Page</h1>
+    <div className={styles.root}>
+      <div className={styles.header}>
+        <h1>Welcome</h1>
+        <h2>Create a new Space to start making lists!</h2>
+      </div>
       <form
+        className={styles.form}
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -58,17 +65,18 @@ export const Landing = () => {
           children={(field) => {
             return (
               <input
+                type="text"
                 name={field.name}
-                placeholder="Author Name"
+                placeholder="Your Name"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
             );
           }}
         />
-        <button type="submit" onClick={form.handleSubmit}>
+        <Button type="submit" onClick={form.handleSubmit}>
           Create Space
-        </button>
+        </Button>
       </form>
     </div>
   );

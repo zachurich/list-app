@@ -30,7 +30,7 @@ export type NewList = Omit<List, "id" | "created_at" | "slug">;
 
 export const useListQuery = (
   listId: string | undefined,
-  spaceId: string | undefined
+  spaceId: string | undefined,
 ) => {
   const { data: allLists, ...rest } = useAllListsQuery(spaceId); // Preload all lists for caching
   const singleList = allLists?.find((list) => list.id === listId);
@@ -58,9 +58,12 @@ export const useAllListsQuery = (spaceId: string | undefined) => {
           ...list,
           data:
             typeof list.data === "string" ? JSON.parse(list.data) : list.data,
-        }))
+        })),
       ),
     queryFn: async () => {
+      if (!spaceId) {
+        throw new Error("Space ID is required to fetch lists");
+      }
       try {
         const { data, error } = await supabase
           .from("list")
@@ -72,7 +75,7 @@ export const useAllListsQuery = (spaceId: string | undefined) => {
         return data;
       } catch (error) {
         throw new Error(
-          error instanceof Error ? error.message : "Unknown error"
+          error instanceof Error ? error.message : "Unknown error",
         );
       }
     },
@@ -81,7 +84,7 @@ export const useAllListsQuery = (spaceId: string | undefined) => {
 
 export const useListMutation = (
   spaceId: string | undefined,
-  listId?: string | undefined
+  listId?: string | undefined,
 ) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -133,8 +136,9 @@ export const useListMutation = (
         (old: List[] | undefined) => {
           const listBeingUpdated = old?.find((list) => list.id === listId);
           const existing = (old || []).filter(
-            (list) => list.id !== listBeingUpdated?.id
+            (list) => list.id !== listBeingUpdated?.id,
           );
+
           return sortLists([
             ...existing,
             {
@@ -147,7 +151,7 @@ export const useListMutation = (
               ...variables,
             },
           ]);
-        }
+        },
       );
 
       return { previous };
@@ -177,6 +181,28 @@ export const useListDelete = (spaceId: string | undefined) => {
         throw new Error(error.message);
       }
     },
+    onMutate: async (listId, context) => {
+      await context.client.cancelQueries({ queryKey: ["lists"] });
+      // Snapshot the previous value
+      const previous: List[] | undefined = context.client.getQueryData([
+        "lists",
+      ]);
+      // Optimistically update to the new value
+      await context.client.setQueryData(
+        ["lists"],
+        (old: List[] | undefined) => {
+          const listWithoutDeletedItem = (old || []).filter(
+            (list) => list.id !== listId,
+          );
+          return sortLists([...listWithoutDeletedItem]);
+        },
+      );
+
+      return { previous };
+    },
+    onError: (err, newTodo, onMutateResult, context) => {
+      context.client.setQueryData(["lists"], onMutateResult?.previous);
+    },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["lists"] }),
   });
 };
@@ -200,7 +226,7 @@ export const createListItem = () => {
 export const updateListItemById = (
   id: string,
   items: ListItem[],
-  updates: Partial<ListItem>
+  updates: Partial<ListItem>,
 ) => {
   return items.map((item) => (item.id === id ? { ...item, ...updates } : item));
 };
@@ -220,7 +246,7 @@ export const deleteListItemById = (id: string, items: ListItem[]) => {
 export const updateListItemContent = (
   id: string,
   items: ListItem[],
-  content: string
+  content: string,
 ) => {
   return updateListItemById(id, items, { content });
 };

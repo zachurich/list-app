@@ -14,7 +14,17 @@
 
 .header h1 {
   font-size: 1.25rem;
-  margin-top: 1rem;
+  margin: 0;
+}
+
+.header a {
+  font-weight: bold;
+}
+
+.header a:hover,
+.header a:focus {
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .themeToggle {
@@ -31,4 +41,30 @@
   width: 30px;
   height: 30px;
   padding: 0.25rem;
+}
+
+.listBreadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(20%);
+  transition:
+    opacity var(--transition),
+    transform var(--transition);
+}
+
+.listBreadcrumb.loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.listBreadcrumb svg {
+  margin-left: 0.25rem;
+  padding-top: 2px;
+}
+
+.listBreadcrumbTitle {
+  font-weight: bold;
+  font-size: 1.25rem;
 }
