@@ -88,6 +88,7 @@ export const useListMutation = (
 ) => {
   const queryClient = useQueryClient();
   return useMutation({
+    mutationKey: ["lists"],
     mutationFn: async (newList: Partial<List>) => {
       if (!spaceId) {
         throw new Error("Space ID is required to create a list");
@@ -166,6 +167,7 @@ export const useListMutation = (
 export const useListDelete = (spaceId: string | undefined) => {
   const queryClient = useQueryClient();
   return useMutation({
+    mutationKey: ["lists"],
     mutationFn: async (listId: string) => {
       if (!spaceId) {
         throw new Error("Space ID is required to delete a list");

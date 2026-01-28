@@ -43,6 +43,7 @@ export const useSpaceQuery = () => {
 export const useSpaceMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
+    mutationKey: ["space"],
     mutationFn: async (newSpace: InsertSpace) => {
       const spaceToken = createSpaceToken();
       const { data, error } = await supabase
@@ -61,6 +62,32 @@ export const useSpaceMutation = () => {
     },
     onError: () => {
       clearSpaceToken();
+    },
+  });
+};
+
+export const useSpaceDeletion = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ["space"],
+    mutationFn: async ({
+      spaceId,
+      spaceToken,
+    }: {
+      spaceId: string;
+      spaceToken: string;
+    }) => {
+      const { error } = await supabase
+        .from("space")
+        .delete()
+        .eq("id", spaceId)
+        .eq("space_token", spaceToken);
+      if (error) {
+        throw new Error(error.message);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["space"] });
     },
   });
 };

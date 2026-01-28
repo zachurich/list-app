@@ -43,6 +43,17 @@
   padding: 0.25rem;
 }
 
+.actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.menu {
+  left: -50%;
+}
+
 .listBreadcrumb {
   display: flex;
   align-items: center;

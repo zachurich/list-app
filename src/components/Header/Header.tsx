@@ -7,11 +7,16 @@ import { useListId } from "../../ui";
 import { Link } from "react-router";
 import { useListQuery } from "../../services/lists";
 import classNames from "classnames";
+// import { Menu } from "../Menu/Menu";
+// import { clearSpaceToken } from "../../services/token";
+// import { useSpaceDeletion } from "../../services/spaces";
 
 export const Header = () => {
   const { theme, toggleTheme } = useTheme();
   const listId = useListId();
   const { space, isLoading } = useSpace();
+  // const { mutateAsync: clearSpace } = useSpaceDeletion();
+  // const navigate = useNavigate();
   const list = useListQuery(listId, space?.id).data;
 
   const getAuthorName = () =>
@@ -42,6 +47,16 @@ export const Header = () => {
     );
   };
 
+  // const onClearSpace = async () => {
+  //   if (!space?.id || !space?.space_token) return;
+  //   await clearSpace({
+  //     spaceId: space.id,
+  //     spaceToken: space.space_token,
+  //   });
+  //   clearSpaceToken();
+  //   navigate("/");
+  // };
+
   return (
     <header className={styles.header}>
       <div
@@ -52,13 +67,28 @@ export const Header = () => {
         <h1>{getHeaderTitle() || "Lists"}</h1>
         {getHeaderBreadcrumb()}
       </div>
-      <Button
-        // className={styles.themeToggle}
-        variant="icon"
-        onClick={toggleTheme}
-      >
-        {theme === "dark" ? <Sun size={24} /> : <Moon size={24} />}
-      </Button>
+      <div className={styles.actions}>
+        <Button
+          // className={styles.themeToggle}
+          variant="icon"
+          onClick={toggleTheme}
+        >
+          {theme === "dark" ? <Sun size={24} /> : <Moon size={24} />}
+        </Button>
+        {/* <Menu
+          className={styles.menu}
+          items={[
+            // {
+            //   label: "Share 🚧",
+            //   onClick: () => null,
+            // },
+            {
+              label: "Clear Space",
+              onClick: onClearSpace,
+            },
+          ]}
+        /> */}
+      </div>
     </header>
   );
 };

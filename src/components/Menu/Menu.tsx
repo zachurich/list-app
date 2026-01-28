@@ -3,13 +3,21 @@ import styles from "./menu.module.css";
 import { Ellipsis } from "lucide-react";
 import { Button } from "../Button/Button";
 
+import classNames from "classnames";
+
 type MenuItem = {
   label: string;
   onClick: () => Promise<void> | void;
   id?: string;
 };
 
-export const Menu = ({ items }: { items: MenuItem[] }) => {
+export const Menu = ({
+  className,
+  items,
+}: {
+  className?: string;
+  items: MenuItem[];
+}) => {
   const [visible, setVisible] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +49,7 @@ export const Menu = ({ items }: { items: MenuItem[] }) => {
         <Ellipsis size={18} />
       </Button>
       {visible && (
-        <div className={styles.menu} ref={menuRef}>
+        <div className={classNames(styles.menu, className)} ref={menuRef}>
           {items.map((item) => (
             <button
               className={styles.menuItemButton}

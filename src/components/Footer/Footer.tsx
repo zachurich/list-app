@@ -1,4 +1,4 @@
-import { Copyright, Divide } from "lucide-react";
+import { Copyright } from "lucide-react";
 import styles from "./footer.module.css";
 
 export const Footer = () => {
