@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { getSpaceToken } from "./services/token";
 import { ThemeProvider } from "./theme";
 import { UiProvider } from "./ui";
+import { Footer } from "./components/Footer/Footer";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -62,6 +63,7 @@ function App() {
                 <Route key={index} path={route.path} element={route.element} />
               ))}
             </Routes>
+            <Footer />
           </UiProvider>
         </BrowserRouter>
       </PersistQueryClientProvider>

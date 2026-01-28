@@ -15,6 +15,7 @@
   --white: #f0f0f0;
 
   --primary-text-color: var(--white);
+  --secondary-text-color: rgba(255, 255, 255, 0.7);
 
   --border-color: rgba(255, 255, 255, 0.1);
   --border-color-faint: rgba(255, 255, 255, 0.05);
@@ -65,6 +66,7 @@
   --primary-text-color: #1c1c1c;
   --button-text-hover-color: var(--white);
   --checkbox-border-color: rgba(0, 0, 0, 0.6);
+  --secondary-text-color: rgba(0, 0, 0, 0.652);
 
   color: var(--primary-text-color);
 }
