@@ -10,6 +10,8 @@ import { useSpaceQuery } from "../../services/spaces";
 import { useForm } from "@tanstack/react-form";
 
 import styles from "./list.module.css";
+import { Button } from "../../components/Button/Button";
+import { PencilIcon, Plus } from "lucide-react";
 
 type Props = {
   listId: string;
@@ -17,8 +19,11 @@ type Props = {
 
 export const List = ({ listId }: Props) => {
   const { data: spaceData } = useSpaceQuery();
-  const { data: listData } = useListQuery(listId, spaceData?.id);
-  const { mutateAsync: updateList } = useListMutation(spaceData?.id, listId);
+  const { data: listData, isLoading } = useListQuery(listId, spaceData?.id);
+  const { mutateAsync: updateList, isPending } = useListMutation(
+    spaceData?.id,
+    listId,
+  );
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [isAddingItem, setIsAddingItem] = useState(false);
@@ -40,7 +45,7 @@ export const List = ({ listId }: Props) => {
       setIsEditingTitle(false);
       setIsAddingItem(false);
     }
-  }, [listData?.title, listData?.data]);
+  }, [listData?.title, listData?.data, isPending, isLoading]);
 
   const form = useForm({
     defaultValues: {
@@ -48,7 +53,6 @@ export const List = ({ listId }: Props) => {
       listItem: "",
     },
     onSubmit: async (_form) => {
-      console.log(_form.value.listItem);
       if (listData) {
         const listUpdate = {
           ...listData,
@@ -81,7 +85,7 @@ export const List = ({ listId }: Props) => {
     if (isEditingTitle || isAddingItem) {
       form.reset();
     }
-  }, [listData?.id]);
+  }, [listData?.id, listData?.title, listData?.data, isPending, isLoading]);
 
   const handleTitleEdit = () => {
     setIsAddingItem(false);
@@ -124,7 +128,6 @@ export const List = ({ listId }: Props) => {
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          console.log("ZACH", e);
           form.handleSubmit(e);
         }}
       >
@@ -148,7 +151,12 @@ export const List = ({ listId }: Props) => {
             />
           ) : (
             <h2 ref={focusRef} onClick={handleTitleEdit}>
-              {listData?.title}
+              {listData?.title}{" "}
+              <PencilIcon
+                className={styles.editIcon}
+                strokeWidth={2}
+                size={18}
+              />
             </h2>
           )}
         </div>
@@ -187,6 +195,23 @@ export const List = ({ listId }: Props) => {
               />
             </li>
           ))}
+          {/* {pendingItem && (
+            <li className={styles.listItem} key={pendingItem.id}>
+              <label htmlFor={`item-${pendingItem.id}`}>
+                <div className={styles.checkboxContainer}>
+                  <input
+                    id={`item-${pendingItem.id}`}
+                    name="listItem"
+                    type="checkbox"
+                    checked={pendingItem.completed}
+                    disabled
+                  />
+                  <span className={styles.checkmark}></span>
+                </div>
+                <span className={styles.labelText}>{pendingItem.content}</span>
+              </label>
+            </li>
+          )} */}
         </ul>
         <div className={styles.addItem}>
           {isAddingItem ? (
@@ -208,13 +233,15 @@ export const List = ({ listId }: Props) => {
               }}
             />
           ) : (
-            <button
-              className="secondary"
+            <Button
+              disabled={isPending || isLoading}
+              variant="secondary"
               type="button"
+              icon={<Plus size={16} />}
               onClick={handleItemAddClick}
             >
-              + Add Item
-            </button>
+              Add Item
+            </Button>
           )}
         </div>
       </form>
