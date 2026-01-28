@@ -118,7 +118,12 @@ export const Space = () => {
           New List
         </Button>
       </aside>
-      <main className={styles.main}>
+      <main
+        className={styles.main}
+        style={{
+          display: isSidebarVisible && isMobile ? "none" : "block",
+        }}
+      >
         {listId ? (
           <List listId={listId} />
         ) : (

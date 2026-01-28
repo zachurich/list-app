@@ -24,6 +24,10 @@
   transform: none;
 }
 
+.main {
+  min-height: 100dvh;
+}
+
 .lists {
   display: flex;
   flex-direction: column;
