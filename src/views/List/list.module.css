@@ -59,12 +59,33 @@
   text-align: left;
 }
 
+.listItem label:hover + .deleteItem,
+.listItem label:focus + .deleteItem {
+  visibility: visible;
+}
+
 .listItem .checkboxContainer {
   position: relative;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+}
+
+.labelText {
+  display: flex;
+}
+
+.deleteItem {
+  position: absolute;
+  visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--action-color);
+  margin-left: auto;
+  padding: 0 0.5rem;
   cursor: pointer;
 }
 

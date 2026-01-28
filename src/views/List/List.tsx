@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   createListItem,
+  deleteListItemById,
   markItemCompleted,
   markItemIncomplete,
   useListMutation,
@@ -11,7 +12,7 @@ import { useForm } from "@tanstack/react-form";
 
 import styles from "./list.module.css";
 import { Button } from "../../components/Button/Button";
-import { PencilIcon, Plus } from "lucide-react";
+import { PencilIcon, Plus, X } from "lucide-react";
 
 type Props = {
   listId: string;
@@ -41,11 +42,22 @@ export const List = ({ listId }: Props) => {
   };
 
   useEffect(() => {
-    if (listData?.title || listData?.data) {
-      setIsEditingTitle(false);
-      setIsAddingItem(false);
+    if (!isLoading) {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 0);
     }
-  }, [listData?.title, listData?.data, isPending, isLoading]);
+  }, [isLoading]);
+
+  // useEffect(() => {
+  //   if (listData?.title) {
+  //     setIsAddingItem(false);
+  //   }
+
+  //   if (listData?.data) {
+  //     setIsEditingTitle(false);
+  //   }
+  // }, [listData?.title, listData?.data, isPending, isLoading]);
 
   const form = useForm({
     defaultValues: {
@@ -75,6 +87,10 @@ export const List = ({ listId }: Props) => {
             await handleUpdateList(listUpdate);
           } catch (error) {
             console.error("Error creating space:", error);
+          } finally {
+            if (listData?.title !== _form.value.title) {
+              setIsEditingTitle(false);
+            }
           }
         }
       }
@@ -117,8 +133,6 @@ export const List = ({ listId }: Props) => {
   const handleItemAddBlur = async () => {
     if (form.getFieldValue("listItem")) {
       form.handleSubmit();
-    } else {
-      setIsAddingItem(false);
     }
   };
 
@@ -193,6 +207,19 @@ export const List = ({ listId }: Props) => {
                   );
                 }}
               />
+              <span
+                role="button"
+                className={styles.deleteItem}
+                onClick={() =>
+                  updateList({
+                    data: deleteListItemById(item.id, listData.data),
+                    title: listData?.title || "",
+                    space_id: listData?.space_id || "",
+                  })
+                }
+              >
+                <X size={16} />
+              </span>
             </li>
           ))}
           {/* {pendingItem && (
