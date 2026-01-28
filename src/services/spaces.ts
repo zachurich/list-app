@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import supabase from "./db";
-import { v4 as uuidv4 } from "uuid";
 import { clearSpaceToken, createSpaceToken, getSpaceToken } from "./token";
 
 type Space = {
@@ -34,7 +33,7 @@ export const useSpaceQuery = () => {
         return data?.[0];
       } catch (error) {
         throw new Error(
-          error instanceof Error ? error.message : "Unknown error"
+          error instanceof Error ? error.message : "Unknown error",
         );
       }
     },

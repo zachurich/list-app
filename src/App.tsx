@@ -9,7 +9,6 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 import { useEffect } from "react";
 import { getSpaceToken } from "./services/token";
 import { ThemeProvider } from "./theme";
-import { BackLink } from "./components/BackLink/BackLink";
 import { UiProvider } from "./ui";
 
 const queryClient = new QueryClient({

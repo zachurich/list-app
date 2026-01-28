@@ -156,7 +156,7 @@ export const useListMutation = (
 
       return { previous };
     },
-    onError: (err, newTodo, onMutateResult, context) => {
+    onError: (_, __, onMutateResult, context) => {
       context.client.setQueryData(["lists"], onMutateResult?.previous);
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["lists"] }),
@@ -200,7 +200,7 @@ export const useListDelete = (spaceId: string | undefined) => {
 
       return { previous };
     },
-    onError: (err, newTodo, onMutateResult, context) => {
+    onError: (_, __, onMutateResult, context) => {
       context.client.setQueryData(["lists"], onMutateResult?.previous);
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["lists"] }),

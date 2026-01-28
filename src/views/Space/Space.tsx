@@ -45,7 +45,7 @@ export const Space = () => {
     }
   };
 
-  if (error) {
+  if (error instanceof Error) {
     return <div>Error loading space: {error.message}</div>;
   }
 
