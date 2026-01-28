@@ -3,7 +3,6 @@ import classNames from "classnames";
 import styles from "./button.module.css";
 
 type Props = {
-  ref?: React.Ref<unknown>;
   onClick: () => void;
   children: React.ReactNode;
   variant?: "primary" | "secondary" | "icon";
