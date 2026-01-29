@@ -202,6 +202,19 @@ export const List = ({ listId }: Props) => {
               )}
               <input
                 ref={focusRef}
+                onFocus={
+                  mode === "add"
+                    ? () => {
+                        const lastItem =
+                          document.querySelector(`li:last-of-type`);
+                        console.log(lastItem);
+                        lastItem?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "nearest",
+                        });
+                      }
+                    : undefined
+                }
                 className={styles.addItemInput}
                 type="text"
                 name={field.name}
