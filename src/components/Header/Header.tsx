@@ -1,6 +1,6 @@
 import styles from "./header.module.css";
 import { useTheme } from "../../theme";
-import { ChevronRight, Moon, Sun } from "lucide-react";
+import { ChevronLeft, ChevronRight, Moon, Sun } from "lucide-react";
 import { Button } from "../Button/Button";
 import { useSpace } from "../../views/Space/hooks";
 import { useListId } from "../../ui";
@@ -28,7 +28,12 @@ export const Header = () => {
 
   const getHeaderTitle = () => {
     if (listId) {
-      return <Link to="..">{getAuthorName()}</Link>;
+      return (
+        <Link to="..">
+          <ChevronLeft size={28} strokeWidth={2} />
+          {getAuthorName()}
+        </Link>
+      );
     }
     return getAuthorName();
   };
@@ -39,7 +44,7 @@ export const Header = () => {
     }
     return (
       <>
-        <ChevronRight size={20} />
+        <ChevronRight size={20} strokeWidth={2} />
         <div className={styles.listBreadcrumbTitle}>
           {list?.title || "List"}
         </div>
@@ -65,7 +70,7 @@ export const Header = () => {
         })}
       >
         <h1>{getHeaderTitle() || "Lists"}</h1>
-        {getHeaderBreadcrumb()}
+        {/* {getHeaderBreadcrumb()} */}
       </div>
       <div className={styles.actions}>
         <Button

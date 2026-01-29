@@ -65,14 +65,21 @@
     transform var(--transition);
 }
 
+.listBreadcrumb a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
 .listBreadcrumb.loaded {
   opacity: 1;
   transform: translateY(0);
 }
 
 .listBreadcrumb svg {
-  margin-left: 0.25rem;
   padding-top: 2px;
+  margin-left: -0.25rem;
 }
 
 .listBreadcrumbTitle {
