@@ -120,8 +120,8 @@
   position: absolute;
   inset: 0;
   margin: auto;
-  width: calc(var(--checkbox-size));
-  height: calc(var(--checkbox-size));
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
   background-color: var(--checkbox-color);
   border-radius: var(--corners, 2rem);
   transition: opacity 150ms;
