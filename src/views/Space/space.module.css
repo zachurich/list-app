@@ -26,7 +26,7 @@
 
 .main {
   position: relative;
-  min-height: 100dvh;
+  min-height: 100svh;
 }
 
 .lists {
@@ -38,7 +38,7 @@
   /* padding: 1rem 0; */
   max-width: 20rem;
   border-right: var(--border-sm);
-  min-height: calc(100dvh - 3rem);
+  min-height: calc(100svh - 3rem);
   padding: 0.8rem 0;
   gap: 0.75rem;
 
