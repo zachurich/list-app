@@ -1,11 +1,11 @@
 import styles from "./header.module.css";
 import { useTheme } from "../../theme";
-import { ChevronLeft, ChevronRight, Moon, Sun } from "lucide-react";
+import { ChevronLeft, Moon, Sun } from "lucide-react";
 import { Button } from "../Button/Button";
 import { useSpace } from "../../views/Space/hooks";
 import { useListId } from "../../ui";
 import { Link } from "react-router";
-import { useListQuery } from "../../services/lists";
+// import { useListQuery } from "../../services/lists";
 import classNames from "classnames";
 // import { Menu } from "../Menu/Menu";
 // import { clearSpaceToken } from "../../services/token";
@@ -17,7 +17,7 @@ export const Header = () => {
   const { space, isLoading } = useSpace();
   // const { mutateAsync: clearSpace } = useSpaceDeletion();
   // const navigate = useNavigate();
-  const list = useListQuery(listId, space?.id).data;
+  // const list = useListQuery(listId, space?.id).data;
 
   const getAuthorName = () =>
     space
