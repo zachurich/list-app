@@ -38,19 +38,19 @@ export const Header = () => {
     return getAuthorName();
   };
 
-  const getHeaderBreadcrumb = () => {
-    if (!listId || !list) {
-      return null;
-    }
-    return (
-      <>
-        <ChevronRight size={20} strokeWidth={2} />
-        <div className={styles.listBreadcrumbTitle}>
-          {list?.title || "List"}
-        </div>
-      </>
-    );
-  };
+  // const getHeaderBreadcrumb = () => {
+  //   if (!listId || !list) {
+  //     return null;
+  //   }
+  //   return (
+  //     <>
+  //       <ChevronRight size={20} strokeWidth={2} />
+  //       <div className={styles.listBreadcrumbTitle}>
+  //         {list?.title || "List"}
+  //       </div>
+  //     </>
+  //   );
+  // };
 
   // const onClearSpace = async () => {
   //   if (!space?.id || !space?.space_token) return;
