@@ -89,24 +89,27 @@ export const Space = () => {
           display: isSidebarVisible ? undefined : "none",
         }}
       >
-        {listsData?.map((list) => (
-          <section
-            key={list.id}
-            className={classNames(styles.list, {
-              [styles.activeList]: list.id === listId,
-            })}
-          >
-            <Link to={`/${data?.id}/list/${list.id}`}>
-              {list.title}{" "}
-              {list.data.length > 0 && list.data.every((item) => item.completed)
-                ? "✓"
-                : ""}
-            </Link>
-            <div className={styles.listMenu}>
-              <Menu items={getMenuItems(list)} />
-            </div>
-          </section>
-        ))}
+        <div className={styles.listContainer}>
+          {listsData?.map((list) => (
+            <section
+              key={list.id}
+              className={classNames(styles.list, {
+                [styles.activeList]: list.id === listId,
+              })}
+            >
+              <Link to={`/${data?.id}/list/${list.id}`}>
+                {list.title}{" "}
+                {list.data.length > 0 &&
+                list.data.every((item) => item.completed)
+                  ? "✓"
+                  : ""}
+              </Link>
+              <div className={styles.listMenu}>
+                <Menu items={getMenuItems(list)} />
+              </div>
+            </section>
+          ))}
+        </div>
         <Button
           className={styles.addList}
           icon={<Plus size={16} />}

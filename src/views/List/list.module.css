@@ -1,9 +1,17 @@
 .list {
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   box-sizing: border-box;
   text-align: left;
+}
+
+.list form {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .listTitle {
@@ -32,8 +40,11 @@
 }
 
 .listItems {
+  display: flex;
+  flex-direction: column;
   margin-top: 1rem;
   width: 100%;
+  gap: 0.5rem;
   list-style-type: none;
   margin-left: 0;
   padding-left: 0;
@@ -44,7 +55,7 @@
   --checkbox-size: 1.5rem;
 
   display: flex;
-  justify-content: flex-end;
+  gap: 1rem;
   align-items: center;
   margin: 0;
   padding: 0;
@@ -53,14 +64,15 @@
 .listItem label {
   display: flex;
   gap: 1rem;
-  flex: 1;
   padding: 0.25rem 0;
   cursor: pointer;
   text-align: left;
 }
 
-.listItem label:hover + .deleteItem,
-.listItem label:focus + .deleteItem {
+.listItem:hover .deleteItem,
+.listItem:focus-within .deleteItem,
+.listItem:hover .editItem,
+.listItem:focus-within .editItem {
   visibility: visible;
 }
 
@@ -78,25 +90,29 @@
 }
 
 .deleteItem {
-  position: absolute;
   visibility: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--action-color);
-  margin-left: auto;
-  padding: 0 0.5rem;
   cursor: pointer;
 }
 
-.listItem input {
+.editItem {
+  visibility: hidden;
+  padding: 0 0.25rem;
+  color: var(--action-color);
+  cursor: pointer;
+}
+
+.listItem input[type="checkbox"] {
   cursor: pointer;
   width: var(--checkbox-size);
   height: var(--checkbox-size);
   appearance: none;
   margin: 0;
   padding: 0;
-  border: 2px solid var(--checkbox-border-color);
+  border: 1px solid var(--checkbox-border-color);
   border-radius: var(--corners, 2rem);
 }
 
@@ -104,12 +120,19 @@
   position: absolute;
   inset: 0;
   margin: auto;
-  display: block;
-  width: calc(var(--checkbox-size) - 12px);
-  height: calc(var(--checkbox-size) - 12px);
+  width: calc(var(--checkbox-size));
+  height: calc(var(--checkbox-size));
   background-color: var(--checkbox-color);
   border-radius: var(--corners, 2rem);
   transition: opacity 150ms;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--background-color);
+}
+
+.listItem input + .checkmark svg {
+  margin-top: 1px;
 }
 
 .listItem input:checked + .checkmark {
@@ -121,10 +144,23 @@
 }
 
 .addItem {
+  position: sticky;
+  bottom: 1.25rem;
   width: 100%;
   margin-top: 1rem;
 }
 
 .addItemInput[type="text"] {
   font-size: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+  .list form {
+    width: 100%;
+  }
+
+  .addItem button,
+  .addItem input {
+    width: 100%;
+  }
 }

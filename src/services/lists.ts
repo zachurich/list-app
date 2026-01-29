@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import supabase from "./db";
 import { v4 as uuidv4 } from "uuid";
 
-type ListItem = {
+export type ListItem = {
   id: string;
   content: string;
   completed: boolean;

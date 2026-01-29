@@ -4,15 +4,17 @@ import {
   deleteListItemById,
   markItemCompleted,
   markItemIncomplete,
+  updateListItemById,
   useListMutation,
   useListQuery,
+  type ListItem,
 } from "../../services/lists";
 import { useSpaceQuery } from "../../services/spaces";
 import { useForm } from "@tanstack/react-form";
 
 import styles from "./list.module.css";
 import { Button } from "../../components/Button/Button";
-import { PencilIcon, Plus, X } from "lucide-react";
+import { CheckIcon, PencilIcon, Plus, X } from "lucide-react";
 
 type Props = {
   listId: string;
@@ -28,6 +30,7 @@ export const List = ({ listId }: Props) => {
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [isAddingItem, setIsAddingItem] = useState(false);
+  const [isEditingItem, setIsEditingItem] = useState<ListItem | null>(null);
 
   const focusRef = useRef<HTMLInputElement>(null);
 
@@ -63,6 +66,7 @@ export const List = ({ listId }: Props) => {
     defaultValues: {
       title: listData?.title || "",
       listItem: "",
+      editListItem: "",
     },
     onSubmit: async (_form) => {
       if (listData) {
@@ -72,6 +76,7 @@ export const List = ({ listId }: Props) => {
 
         if (listData?.title !== _form.value.title) {
           listUpdate.title = _form.value.title;
+          setIsEditingTitle(false);
         }
 
         if (_form.value.listItem) {
@@ -82,15 +87,26 @@ export const List = ({ listId }: Props) => {
             : [listItem];
         }
 
-        if (listData?.title !== _form.value.title || !!_form.value.listItem) {
+        if (_form.value.editListItem && isEditingItem) {
+          listUpdate.data = updateListItemById(
+            isEditingItem.id,
+            listData.data,
+            {
+              content: _form.value.editListItem,
+            },
+          );
+          setIsEditingItem(null);
+        }
+
+        if (
+          listData?.title !== _form.value.title ||
+          !!_form.value.listItem ||
+          (isEditingItem && !!_form.value.editListItem)
+        ) {
           try {
             await handleUpdateList(listUpdate);
           } catch (error) {
             console.error("Error creating space:", error);
-          } finally {
-            if (listData?.title !== _form.value.title) {
-              setIsEditingTitle(false);
-            }
           }
         }
       }
@@ -98,7 +114,7 @@ export const List = ({ listId }: Props) => {
   });
 
   useEffect(() => {
-    if (isEditingTitle || isAddingItem) {
+    if (isEditingTitle || isAddingItem || isEditingItem) {
       form.reset();
     }
   }, [listData?.id, listData?.title, listData?.data, isPending, isLoading]);
@@ -109,6 +125,25 @@ export const List = ({ listId }: Props) => {
     setTimeout(() => {
       focusRef.current?.focus();
     }, 0);
+  };
+
+  const handleItemEdit = (item: ListItem) => {
+    setIsEditingTitle(false);
+    setIsAddingItem(false);
+    setIsEditingItem(item);
+    setTimeout(() => {
+      focusRef.current?.focus();
+    }, 0);
+  };
+
+  const handleItemDelete = async (itemId: string) => {
+    if (!listData) return;
+
+    await updateList({
+      data: deleteListItemById(itemId, listData.data),
+      title: listData?.title || "",
+      space_id: listData?.space_id || "",
+    });
   };
 
   const handleItemAddClick = () => {
@@ -130,10 +165,59 @@ export const List = ({ listId }: Props) => {
     }
   };
 
-  const handleItemAddBlur = async () => {
-    if (form.getFieldValue("listItem")) {
-      form.handleSubmit();
+  const handleEditItemBlur = async (value: string, defaultValue?: string) => {
+    if (value !== defaultValue) {
+      await form.handleSubmit();
     }
+
+    setIsEditingItem(null);
+  };
+
+  const getCheckMark = () => {
+    return (
+      <span className={styles.checkmark}>
+        <CheckIcon size={16} strokeWidth={4} />
+      </span>
+    );
+  };
+
+  const getAddEditItemInput = (mode: "add" | "edit", defaultValue?: string) => {
+    return (
+      <form.Field
+        name={mode === "add" ? "listItem" : "editListItem"}
+        children={(field) => {
+          return (
+            <>
+              {mode === "edit" && isEditingItem && (
+                <div className={styles.checkboxContainer}>
+                  <input
+                    id={`item-${isEditingItem.id}`}
+                    name={field.name}
+                    type="checkbox"
+                    checked={isEditingItem.completed}
+                    disabled
+                  />
+                  {getCheckMark()}
+                </div>
+              )}
+              <input
+                ref={focusRef}
+                className={styles.addItemInput}
+                type="text"
+                name={field.name}
+                placeholder={
+                  mode === "add" ? "New List Item" : "Edit List Item"
+                }
+                value={mode === "add" ? field.state.value : undefined}
+                defaultValue={defaultValue}
+                onBlur={(e) => handleEditItemBlur(e.target.value, defaultValue)}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+            </>
+          );
+        }}
+      />
+    );
   };
 
   return (
@@ -145,84 +229,99 @@ export const List = ({ listId }: Props) => {
           form.handleSubmit(e);
         }}
       >
-        <div className={styles.listTitle}>
-          {isEditingTitle ? (
-            <form.Field
-              name="title"
-              children={(field) => {
-                return (
-                  <input
-                    className="h2"
-                    type="text"
-                    ref={focusRef}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={handleTitleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                );
-              }}
-            />
-          ) : (
-            <h2 ref={focusRef} onClick={handleTitleEdit}>
-              {listData?.title}{" "}
-              <PencilIcon
-                className={styles.editIcon}
-                strokeWidth={2}
-                size={18}
-              />
-            </h2>
-          )}
-        </div>
-        <ul className={styles.listItems}>
-          {listData?.data.map((item, index) => (
-            <li className={styles.listItem} key={index}>
+        <div>
+          <div className={styles.listTitle}>
+            {isEditingTitle ? (
               <form.Field
-                name="listItem"
+                name="title"
                 children={(field) => {
                   return (
-                    <label htmlFor={`item-${item.id}`}>
-                      <div className={styles.checkboxContainer}>
-                        <input
-                          id={`item-${item.id}`}
-                          name={field.name}
-                          type="checkbox"
-                          checked={item.completed}
-                          onChange={(e) => {
-                            const listItems = e.target.checked
-                              ? markItemCompleted(item.id, listData.data)
-                              : markItemIncomplete(item.id, listData.data);
-
-                            updateList({
-                              data: listItems,
-                              title: listData?.title || "",
-                              space_id: listData?.space_id || "",
-                            });
-                          }}
-                        />
-                        <span className={styles.checkmark}></span>
-                      </div>
-                      <span className={styles.labelText}>{item.content}</span>
-                    </label>
+                    <input
+                      className="h2"
+                      type="text"
+                      ref={focusRef}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={handleTitleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
                   );
                 }}
               />
-              <span
-                role="button"
-                className={styles.deleteItem}
-                onClick={() =>
-                  updateList({
-                    data: deleteListItemById(item.id, listData.data),
-                    title: listData?.title || "",
-                    space_id: listData?.space_id || "",
-                  })
-                }
-              >
-                <X size={16} />
-              </span>
-            </li>
-          ))}
-          {/* {pendingItem && (
+            ) : (
+              <h2 ref={focusRef} onClick={handleTitleEdit}>
+                {listData?.title}{" "}
+                <PencilIcon
+                  className={styles.editIcon}
+                  strokeWidth={2}
+                  size={18}
+                />
+              </h2>
+            )}
+          </div>
+          <ul className={styles.listItems}>
+            {listData?.data.map((item, index) => (
+              <li className={styles.listItem} key={index}>
+                {isEditingItem?.id === item.id ? (
+                  getAddEditItemInput("edit", item.content)
+                ) : (
+                  <form.Field
+                    name="listItem"
+                    children={(field) => {
+                      return (
+                        <>
+                          <label htmlFor={`item-${item.id}`}>
+                            <div className={styles.checkboxContainer}>
+                              <input
+                                id={`item-${item.id}`}
+                                name={field.name}
+                                type="checkbox"
+                                checked={item.completed}
+                                onChange={(e) => {
+                                  const listItems = e.target.checked
+                                    ? markItemCompleted(item.id, listData.data)
+                                    : markItemIncomplete(
+                                        item.id,
+                                        listData.data,
+                                      );
+
+                                  updateList({
+                                    data: listItems,
+                                    title: listData?.title || "",
+                                    space_id: listData?.space_id || "",
+                                  });
+                                }}
+                              />
+                              {getCheckMark()}
+                            </div>
+                          </label>
+                          <span className={styles.labelText}>
+                            {item.content}
+                          </span>
+                          <span
+                            tabIndex={0}
+                            role="button"
+                            className={styles.editItem}
+                            onClick={() => handleItemEdit(item)}
+                          >
+                            <PencilIcon size={14} />
+                          </span>
+                          <span
+                            tabIndex={0}
+                            role="button"
+                            className={styles.deleteItem}
+                            onClick={() => handleItemDelete(item.id)}
+                          >
+                            <X size={16} />
+                          </span>
+                        </>
+                      );
+                    }}
+                  />
+                )}
+              </li>
+            ))}
+            {/* {pendingItem && (
             <li className={styles.listItem} key={pendingItem.id}>
               <label htmlFor={`item-${pendingItem.id}`}>
                 <div className={styles.checkboxContainer}>
@@ -239,26 +338,11 @@ export const List = ({ listId }: Props) => {
               </label>
             </li>
           )} */}
-        </ul>
+          </ul>
+        </div>
         <div className={styles.addItem}>
           {isAddingItem ? (
-            <form.Field
-              name="listItem"
-              children={(field) => {
-                return (
-                  <input
-                    ref={focusRef}
-                    className={styles.addItemInput}
-                    type="text"
-                    name={field.name}
-                    placeholder="New List Item"
-                    value={field.state.value}
-                    onBlur={handleItemAddBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                );
-              }}
-            />
+            getAddEditItemInput("add")
           ) : (
             <Button
               disabled={isPending || isLoading}

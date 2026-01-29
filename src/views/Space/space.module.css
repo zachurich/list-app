@@ -25,12 +25,15 @@
 }
 
 .main {
+  position: relative;
   min-height: 100dvh;
 }
 
 .lists {
+  position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   margin-top: 0rem;
   /* padding: 1rem 0; */
   max-width: 20rem;
@@ -98,11 +101,17 @@
 }
 
 .addList {
+  position: sticky;
+  bottom: 1.25rem;
+  left: 0;
   margin: 1rem;
   width: calc(100% - 2rem);
 }
 
 @media (max-width: 768px) {
+  .main {
+    padding: 1rem;
+  }
   .space {
     grid-template-columns: 1fr;
   }
